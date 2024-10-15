@@ -3,7 +3,9 @@
   "version": "1.0.0",
   "license": "MIT",
   "scripts": {
-    "dev": "ts-node src/index.ts"
+    "dev": "ts-node src/index.ts",
+    "build": "tsc && prisma generate",
+    "postinstall": "prisma generate" 
   },
   "dependencies": {
     "@prisma/client": "5.20.0",
