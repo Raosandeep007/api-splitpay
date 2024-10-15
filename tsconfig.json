@@ -5,5 +5,7 @@
     "strict": true,
     "lib": ["esnext"],
     "esModuleInterop": true
-  }
+  },
+  "include": ["api/**/*", "prisma/**/*"],
+  "exclude": ["node_modules"]
 }
