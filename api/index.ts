@@ -8,6 +8,14 @@ app.use(express.json());
 
 app.get("/", (req, res) => res.send("Express on Vercel"));
 
+app.get("/vercel", (req, res) =>
+  res.json({
+    message: "Hello from Vercel",
+    status: "ok",
+    statusCode: 200,
+  })
+);
+
 app.post(`/signup`, async (req, res) => {
   const { name, email, posts } = req.body;
 
