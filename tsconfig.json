@@ -6,6 +6,6 @@
     "lib": ["esnext"],
     "esModuleInterop": true
   },
-  "include": ["api/**/*", "prisma/**/*"],
+  "include": ["src/**/*", "prisma/**/*"],
   "exclude": ["node_modules"]
 }
