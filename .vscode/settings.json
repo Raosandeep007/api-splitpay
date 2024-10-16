@@ -1,0 +1,17 @@
+{
+  "files.exclude": {
+    "**/node_modules": true, // Exclude node_modules directory
+    // "**/.vercel": true, // Exclude .vercel directory
+    "**/.git": true // Exclude .git directory
+    // "**/dist": true // Exclude dist directory
+  },
+  "editor.formatOnSave": true, // Format the document on save
+  "files.autoSave": "onFocusChange", // Automatically save files when focus is lost
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "always" // Automatically fix ESLint errors on save
+  },
+  "editor.cursorBlinking": "smooth", // Smooth cursor blinking
+  "editor.defaultFormatter": "esbenp.prettier-vscode", // Use Prettier as the default formatter
+  "javascript.format.enable": false, // Disable built-in JavaScript formatter
+  "typescript.format.enable": false // Disable built-in TypeScript formatter
+}
