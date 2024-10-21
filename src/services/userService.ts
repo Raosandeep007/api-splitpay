@@ -1,3 +1,4 @@
+import { Prisma } from "@prisma/client";
 import prisma from "../prisma/client";
 
 export const UserService = {
@@ -5,9 +6,17 @@ export const UserService = {
     return await prisma.user.findMany();
   },
 
-  createUser: async (data: { name: string; email: string }) => {
+  createUser: async (data: Prisma.UserCreateInput) => {
     return await prisma.user.create({
       data,
+    });
+  },
+
+  findUnique: async ({ email }: Pick<Prisma.UserCreateInput, "email">) => {
+    return await prisma.user.findUnique({
+      where: {
+        email,
+      },
     });
   },
 };
