@@ -20,4 +20,23 @@ export const UserController = {
       res.status(500).json({ error: "Failed to create user" });
     }
   },
+
+  getProfile: async (req: Request, res: Response) => {
+    try {
+      const email = req?.user?.user?.email;
+      const user = await UserService.findUnique({
+        email,
+      });
+
+      res.status(200).json({
+        message: "User profile",
+        data: user,
+      });
+    } catch (error) {
+      console.error("Error fetching user profile:", error);
+      res.status(500).json({
+        error: "Failed to fetch user profile",
+      });
+    }
+  },
 };

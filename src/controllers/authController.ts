@@ -19,6 +19,8 @@ export const AuthController = {
       }
 
       const { email, name, picture } = signInData.user.user_metadata;
+      const access = signInData.session.access_token;
+      const refresh = signInData.session.refresh_token;
 
       let user = await UserService.findUnique({ email });
 
@@ -30,9 +32,45 @@ export const AuthController = {
         });
       }
 
-      res.status(200).json({ message: "Login successful", user });
+      res.status(200).json({
+        message: "Login successful",
+        data: { ...user, access, refresh },
+      });
     } catch (error) {
       res.status(500).json({ error: "Google login failed" });
+    }
+  },
+
+  refreshAccessToken: async (req: Request, res: Response) => {
+    const { refresh } = req.body;
+
+    if (!refresh) {
+      return res.status(400).json({ error: "Refresh token is required" });
+    }
+
+    try {
+      const { data, error } = await AuthService.refreshSession(refresh);
+
+      if (error) {
+        return res
+          .status(401)
+          .json({ error: "Failed to refresh access token" });
+      }
+
+      const access = data?.session?.access_token;
+      const refreshToken = data?.session?.refresh_token;
+      const email = data?.user?.user_metadata?.email;
+
+      let user = await UserService.findUnique({ email });
+
+      if (!access) {
+        return res.status(400).json({ error: "No access token returned" });
+      }
+
+      res.status(200).json({ ...user, access, refresh: refreshToken });
+    } catch (error) {
+      console.error("Error refreshing access token:", error);
+      res.status(500).json({ error: "Internal server error" });
     }
   },
 };

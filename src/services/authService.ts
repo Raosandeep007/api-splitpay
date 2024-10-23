@@ -12,4 +12,12 @@ export const AuthService = {
       token: idToken,
     });
   },
+
+  refreshSession: async (refreshToken: string) => {
+    return await supabase.auth.refreshSession({ refresh_token: refreshToken });
+  },
+
+  getUser: async (token: string) => {
+    return await supabase.auth.getUser(token);
+  },
 };

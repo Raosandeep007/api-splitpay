@@ -1,20 +1,29 @@
 import { Request, Response, NextFunction } from "express";
+import { AuthService } from "../services/authService";
 
-export const authMiddleware = (
+declare module "express-serve-static-core" {
+  interface Request {
+    user?: any;
+  }
+}
+
+export const authMiddleware = async (
   req: Request,
   res: Response,
   next: NextFunction,
 ) => {
-  const token = req.headers.authorization;
+  const token = req.headers.authorization?.split(" ")[1];
 
   if (!token) {
-    return res.status(403).json({ error: "Unauthorized" });
+    return res.status(401).json({ error: "Unauthorized" });
   }
 
-  // Verify token logic (mocked)
-  if (token === "valid_token") {
-    next();
-  } else {
-    res.status(403).json({ error: "Invalid token" });
+  const { data, error } = await AuthService.getUser(token);
+
+  if (error || !data) {
+    return res.status(403).json({ error: "Forbidden" });
   }
+
+  req.user = data; // Attach user info to the request
+  next();
 };

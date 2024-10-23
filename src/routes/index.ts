@@ -17,6 +17,6 @@ router.use("/splitpay/auth", authRoutes);
 
 // Under this all routes are protected
 router.use(authMiddleware);
-router.use("/splitpay/users", userRoutes);
+router.use("/splitpay/user", userRoutes);
 
 export default router;
