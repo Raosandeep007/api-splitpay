@@ -33,8 +33,9 @@ export const AuthController = {
       }
 
       res.status(200).json({
-        message: "Login successful",
-        data: { ...user, access, refresh },
+        ...user,
+        access,
+        refresh,
       });
     } catch (error) {
       res.status(500).json({ error: "Google login failed" });

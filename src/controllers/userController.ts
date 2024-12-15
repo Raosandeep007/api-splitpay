@@ -28,10 +28,7 @@ export const UserController = {
         email,
       });
 
-      res.status(200).json({
-        message: "User profile",
-        data: user,
-      });
+      res.status(200).json(user);
     } catch (error) {
       console.error("Error fetching user profile:", error);
       res.status(500).json({
