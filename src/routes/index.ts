@@ -16,7 +16,8 @@ router.get("/splitpay", (req, res) => {
 router.use("/splitpay/auth", authRoutes);
 
 // Under this all routes are protected
-router.use(authMiddleware);
+// TODO: uncomment this line after implementing authMiddleware
+// router.use(authMiddleware);
 router.use("/splitpay/user", userRoutes);
 
 export default router;

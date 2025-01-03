@@ -33,9 +33,11 @@ export const AuthController = {
       }
 
       res.status(200).json({
-        ...user,
-        access,
-        refresh,
+        data: {
+          ...user,
+          access,
+          refresh,
+        },
       });
     } catch (error) {
       res.status(500).json({ error: "Google login failed" });
@@ -68,7 +70,9 @@ export const AuthController = {
         return res.status(400).json({ error: "No access token returned" });
       }
 
-      res.status(200).json({ ...user, access, refresh: refreshToken });
+      res.status(200).json({
+        data: { ...user, access, refresh: refreshToken },
+      });
     } catch (error) {
       console.error("Error refreshing access token:", error);
       res.status(500).json({ error: "Internal server error" });
