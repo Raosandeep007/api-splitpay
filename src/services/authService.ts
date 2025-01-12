@@ -6,10 +6,38 @@ const supabase = createClient(
 );
 
 export const AuthService = {
-  signInWithIdToken: async (idToken: string) => {
+  authenticateWithGoogleToken: async (idToken: string) => {
     return await supabase.auth.signInWithIdToken({
       provider: "google",
       token: idToken,
+    });
+  },
+
+  signUp: async ({
+    email,
+    password,
+    name,
+  }: {
+    email: string;
+    password: string;
+    name: string;
+  }) => {
+    return await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: {
+          name,
+          email,
+        },
+      },
+    });
+  },
+
+  signIn: async ({ email, password }: { email: string; password: string }) => {
+    return await supabase.auth.signInWithPassword({
+      email,
+      password,
     });
   },
 

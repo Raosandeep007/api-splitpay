@@ -5,7 +5,7 @@ import { AuthService } from "../services/authService";
 export const UserController = {
   getAllUsers: async (req: Request, res: Response) => {
     try {
-      const users = await UserService.getAllUsers();
+      const users = await UserService.getAll();
       res.status(200).json({ data: users });
     } catch (error) {
       res.status(500).json({ error: "Failed to fetch users" });
@@ -15,7 +15,7 @@ export const UserController = {
   createUser: async (req: Request, res: Response) => {
     try {
       const { name, email } = req.body;
-      const user = await UserService.createUser({ name, email });
+      const user = await UserService.create({ name, email });
       res.status(201).json({ data: user });
     } catch (error) {
       res.status(500).json({ error: "Failed to create user" });
@@ -39,7 +39,7 @@ export const UserController = {
           .json({ error: error?.message || "User not found" });
       }
 
-      const user = await UserService.findUnique({
+      const user = await UserService.find({
         email,
       });
 

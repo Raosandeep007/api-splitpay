@@ -3,9 +3,9 @@
   "version": "1.0.0",
   "license": "MIT",
   "scripts": {
-    "build": "tsc && prisma generate",
-    "dev": "ts-node -r tsconfig-paths/register src/server.ts",
     "start": "vercel dev",
+    "dev": "ts-node -r tsconfig-paths/register src/server.ts",
+    "build": "tsc && prisma generate",
     "vercel-build": "yarn build",
     "prisma:generate": "prisma generate",
     "format": "prettier --write ."
