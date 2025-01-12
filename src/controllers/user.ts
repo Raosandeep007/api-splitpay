@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
-import { UserService } from "../services/userService";
-import { AuthService } from "../services/authService";
+import { UserService } from "../services/user";
+import { UserAuthService } from "../services/auth";
 
 export const UserController = {
   getAllUsers: async (req: Request, res: Response) => {
@@ -23,16 +23,17 @@ export const UserController = {
   },
 
   getProfile: async (req: Request, res: Response) => {
-    const token = req.headers.authorization?.split(" ")[1];
-
-    if (!token) {
-      return res.status(401).json({ error: "Unauthorized" });
-    }
-
-    const { data, error } = await AuthService.getUser(token);
-
     try {
+      const token = req.headers.authorization?.split(" ")[1];
+
+      if (!token) {
+        return res.status(401).json({ error: "Unauthorized" });
+      }
+
+      const { data, error } = await UserAuthService.getUser(token);
+
       const email = data.user?.email;
+
       if (!email) {
         return res
           .status(404)

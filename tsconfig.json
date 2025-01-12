@@ -6,6 +6,6 @@
     "lib": ["esnext", "DOM"],
     "esModuleInterop": true
   },
-  "include": ["src/**/*", "prisma/**/*"],
+  "include": ["src/**/*", "prisma/**/*", "supabase/supabase.ts"],
   "exclude": ["node_modules"]
 }

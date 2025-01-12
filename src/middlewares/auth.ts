@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { AuthService } from "../services/authService";
+import { UserAuthService } from "../services/auth";
 
 declare module "express-serve-static-core" {
   interface Request {
@@ -18,7 +18,7 @@ export const authMiddleware = async (
     return res.status(401).json({ error: "Unauthorized" });
   }
 
-  const { data, error } = await AuthService.getUser(token);
+  const { data, error } = await UserAuthService.getUser(token);
 
   if (error || !data) {
     return res.status(403).json({ error: "Forbidden" });

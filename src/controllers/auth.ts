@@ -1,12 +1,8 @@
 import { User } from "@prisma/client";
 import { Request, Response } from "express";
-import { AuthService } from "../services/authService";
-import { UserService } from "../services/userService";
-
-type UserResponse = User & {
-  access: string;
-  refresh: string;
-};
+import { UserAuthService } from "../services/auth";
+import { UserService } from "../services/user";
+import { UserResponse } from "../types/user";
 
 const handleUserResponse = (
   res: Response,
@@ -17,11 +13,10 @@ const handleUserResponse = (
 
 export const AuthController = {
   googleLogin: async (req: Request, res: Response) => {
-    const { idToken } = req.body;
-
     try {
+      const { idToken } = req.body;
       const { data: signInData, error } =
-        await AuthService.authenticateWithGoogleToken(idToken);
+        await UserAuthService.authenticateWithGoogleToken(idToken);
 
       if (error) {
         return res
@@ -57,10 +52,9 @@ export const AuthController = {
   },
 
   signUpWithPassword: async (req: Request, res: Response) => {
-    const { email, password, name } = req.body;
-
     try {
-      const { data, error } = await AuthService.signUp({
+      const { email, password, name } = req.body;
+      const { data, error } = await UserAuthService.signUp({
         email,
         password,
         name,
@@ -98,16 +92,15 @@ export const AuthController = {
   },
 
   signInWithPassword: async (req: Request, res: Response) => {
-    const { email, password } = req.body;
-
     try {
+      const { email, password } = req.body;
       const user = await UserService.find({ email });
 
       if (!user) {
         return res.status(404).json({ message: "User does not exist" });
       }
 
-      const { data, error } = await AuthService.signIn({ email, password });
+      const { data, error } = await UserAuthService.signIn({ email, password });
 
       if (error) {
         return res
@@ -142,16 +135,15 @@ export const AuthController = {
   },
 
   sendOtp: async (req: Request, res: Response) => {
-    const { email } = req.body;
-
     try {
+      const { email } = req.body;
       const user = await UserService.find({ email });
 
       if (!user) {
         return res.status(404).json({ message: "User does not exist" });
       }
 
-      const { data, error } = await AuthService.otpSignIn({ email });
+      const { data, error } = await UserAuthService.otpSignIn({ email });
 
       if (error) {
         return res.status(400).json({ error });
@@ -166,16 +158,15 @@ export const AuthController = {
   },
 
   verifyOtp: async (req: Request, res: Response) => {
-    const { otp, email } = req.body;
-
     try {
+      const { otp, email } = req.body;
       const user = await UserService.find({ email });
 
       if (!user) {
         return res.status(404).json({ message: "User does not exist" });
       }
 
-      const { data, error } = await AuthService.verifyOtp({
+      const { data, error } = await UserAuthService.verifyOtp({
         otp,
         email,
         type: "email",
@@ -212,10 +203,9 @@ export const AuthController = {
   },
 
   refreshAccessToken: async (req: Request, res: Response) => {
-    const { refresh } = req.body;
-
     try {
-      const { data, error } = await AuthService.refreshSession(refresh);
+      const { refresh } = req.body;
+      const { data, error } = await UserAuthService.refreshSession(refresh);
 
       if (error) {
         return res

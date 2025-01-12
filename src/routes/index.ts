@@ -1,7 +1,8 @@
 import { Router } from "express";
-import userRoutes from "./userRoutes";
-import authRoutes from "./authRoutes";
-import { authMiddleware } from "../middlewares/authMiddleware";
+import { authRoutes } from "./auth";
+import { userRoutes } from "./user";
+// import { authMiddleware } from "../middlewares/authMiddleware";
+import { fileRoutes } from "./file";
 
 const router = Router();
 
@@ -14,6 +15,7 @@ router.get("/splitpay", (req, res) => {
 });
 
 router.use("/splitpay/auth", authRoutes);
+router.use("/splitpay/file", fileRoutes);
 
 // Under this all routes are protected
 // TODO: uncomment this line after implementing authMiddleware

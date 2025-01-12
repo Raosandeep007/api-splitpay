@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 
-export const requiredFieldsMiddleware = (fields: string[]) => {
+export const requiredFields = (fields: string[]) => {
   return (req: Request, res: Response, next: Function) => {
     const missingFields = fields.filter((field) => !req.body[field]);
     if (missingFields.length) {
