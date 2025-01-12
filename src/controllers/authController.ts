@@ -25,7 +25,7 @@ export const AuthController = {
 
       if (error) {
         return res
-          .status(400)
+          .status(error.status || 400)
           .json({ error, message: "Invalid Google ID token" });
       }
 
@@ -52,8 +52,7 @@ export const AuthController = {
         },
       });
     } catch (error) {
-      console.error("Error in Google login:", error);
-      res.status(500).json({ error, message: "Google login failed" });
+      return res.status(500).json({ error, message: "Google login failed" });
     }
   },
 
@@ -68,10 +67,18 @@ export const AuthController = {
       });
 
       if (error) {
-        res.status(400).json({ error, message: "Failed to sign up" });
+        return res
+          .status(error.status || 400)
+          .json({ error, message: "Failed to sign up" });
       }
 
-      const user = await UserService.create({ email, name, picture: "" });
+      let user = await UserService.find({ email });
+
+      if (user) {
+        return res.status(400).json({ error, message: "User already exists" });
+      }
+
+      user = await UserService.create({ email, name, picture: "" });
 
       const { access_token: access, refresh_token } = data.session || {};
 
@@ -86,8 +93,7 @@ export const AuthController = {
         data: { ...user, access, refresh: refresh_token },
       });
     } catch (error) {
-      console.error("Error signing up:", error);
-      res.status(500).json({ error, message: "Sign up failed" });
+      return res.status(500).json({ error, message: "Sign up failed" });
     }
   },
 
@@ -95,10 +101,18 @@ export const AuthController = {
     const { email, password } = req.body;
 
     try {
+      const user = await UserService.find({ email });
+
+      if (!user) {
+        return res.status(404).json({ message: "User does not exist" });
+      }
+
       const { data, error } = await AuthService.signIn({ email, password });
 
       if (error) {
-        return res.status(400).json({ error });
+        return res
+          .status(error.status || 400)
+          .json({ error, message: "Failed to sign in" });
       }
 
       const { access_token: access, refresh_token: refresh } =
@@ -109,8 +123,6 @@ export const AuthController = {
           .status(400)
           .json({ error, message: "No access token returned" });
       }
-
-      const user = await UserService.find({ email });
 
       if (!user) {
         return res.status(400).json({ error, message: "User not found" });
@@ -125,8 +137,77 @@ export const AuthController = {
         },
       });
     } catch (error) {
-      console.error("Error signing in:", error);
-      res.status(500).json({ error, message: "Sign in failed" });
+      return res.status(500).json({ error, message: "Sign in failed" });
+    }
+  },
+
+  sendOtp: async (req: Request, res: Response) => {
+    const { email } = req.body;
+
+    try {
+      const user = await UserService.find({ email });
+
+      if (!user) {
+        return res.status(404).json({ message: "User does not exist" });
+      }
+
+      const { data, error } = await AuthService.otpSignIn({ email });
+
+      if (error) {
+        return res.status(400).json({ error });
+      }
+
+      return res.status(200).json({ message: `OTP sent to ${email}` });
+    } catch (error) {
+      return res
+        .status(500)
+        .json({ error, message: "Sign in with OTP failed" });
+    }
+  },
+
+  verifyOtp: async (req: Request, res: Response) => {
+    const { otp, email } = req.body;
+
+    try {
+      const user = await UserService.find({ email });
+
+      if (!user) {
+        return res.status(404).json({ message: "User does not exist" });
+      }
+
+      const { data, error } = await AuthService.verifyOtp({
+        otp,
+        email,
+        type: "email",
+      });
+
+      if (error) {
+        return res.status(400).json({ error });
+      }
+
+      const { session } = data || {};
+      const { access_token: access, refresh_token: refresh } = session || {};
+
+      if (!access || !refresh) {
+        return res
+          .status(400)
+          .json({ error, message: "No access token returned" });
+      }
+
+      if (!user) {
+        return res.status(400).json({ error, message: "User not found" });
+      }
+
+      return handleUserResponse(res, {
+        status: 200,
+        data: {
+          ...user,
+          access,
+          refresh,
+        },
+      });
+    } catch (error) {
+      return res.status(500).json({ error, message: "Failed to verify OTP" });
     }
   },
 
@@ -137,11 +218,12 @@ export const AuthController = {
       const { data, error } = await AuthService.refreshSession(refresh);
 
       if (error) {
-        return res.status(401).json({ error, message: "Failed to refresh" });
+        return res
+          .status(error.status || 401)
+          .json({ error, message: "Failed to refresh" });
       }
 
-      const { access_token: access, refresh_token } = data.session || {};
-      const email = data?.user?.user_metadata?.email;
+      const { access_token: access, refresh_token, user } = data.session || {};
 
       if (!access || !refresh_token) {
         return res
@@ -149,19 +231,25 @@ export const AuthController = {
           .json({ error, message: "No access token returned" });
       }
 
-      const user = await UserService.find({ email });
-
       if (!user) {
         return res.status(400).json({ error, message: "User not found" });
       }
 
       return handleUserResponse(res, {
         status: 200,
-        data: { ...user, access, refresh: refresh_token },
+        data: {
+          id: user.id,
+          email: user.user_metadata.email,
+          name: user.user_metadata.name,
+          picture: user.user_metadata.picture,
+          createdAt: new Date(user.created_at),
+          updatedAt: new Date(user.updated_at || ""),
+          access,
+          refresh: refresh_token,
+        },
       });
     } catch (error) {
-      console.error("Error refreshing access token:", error);
-      res
+      return res
         .status(500)
         .json({ error, message: "Failed to refresh access token" });
     }

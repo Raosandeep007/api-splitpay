@@ -1,4 +1,4 @@
-import { createClient } from "@supabase/supabase-js";
+import { createClient, EmailOtpType } from "@supabase/supabase-js";
 
 const supabase = createClient(
   process.env.SUPABASE_URL!,
@@ -38,6 +38,31 @@ export const AuthService = {
     return await supabase.auth.signInWithPassword({
       email,
       password,
+    });
+  },
+
+  otpSignIn: async ({ email }: { email: string }) => {
+    return await supabase.auth.signInWithOtp({
+      email,
+      options: {
+        shouldCreateUser: false,
+      },
+    });
+  },
+
+  verifyOtp: async ({
+    otp,
+    email,
+    type,
+  }: {
+    otp: string;
+    email: string;
+    type: EmailOtpType;
+  }) => {
+    return await supabase.auth.verifyOtp({
+      email,
+      token: otp,
+      type,
     });
   },
 

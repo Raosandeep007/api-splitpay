@@ -23,6 +23,18 @@ router.post(
 );
 
 router.post(
+  "/otp-sign-in",
+  requiredFieldsMiddleware(["email"]),
+  AuthController.sendOtp,
+);
+
+router.post(
+  "/verify-otp",
+  requiredFieldsMiddleware(["otp", "email"]),
+  AuthController.verifyOtp,
+);
+
+router.post(
   "/refresh-token",
   requiredFieldsMiddleware(["refresh"]),
   AuthController.refreshAccessToken,
