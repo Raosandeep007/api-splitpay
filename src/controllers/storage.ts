@@ -21,12 +21,15 @@ export const StorageController = {
       });
 
       if (error) {
-        return res.status(500).json({ error });
+        return res.status(500).json({
+          error,
+          message: "Failed to upload file",
+        });
       }
 
       return res.status(200).json({ data });
     } catch (error) {
-      return res.status(500).json({ error });
+      return res.status(500).json({ error, message: "Failed to upload file" });
     }
   },
 
@@ -35,12 +38,12 @@ export const StorageController = {
       const { path } = req.params;
       const { data, error } = await StorageService.getFile(path);
       if (error) {
-        return res.status(500).json({ error });
+        return res.status(500).json({ error, message: "Failed to get file" });
       }
 
       return res.status(200).json({ data });
     } catch (error) {
-      return res.status(500).json({ error });
+      return res.status(500).json({ error, message: "Failed to get file" });
     }
   },
 };

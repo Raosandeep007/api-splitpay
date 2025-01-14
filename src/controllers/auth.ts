@@ -116,10 +116,6 @@ export const AuthController = {
           .json({ error, message: "No access token returned" });
       }
 
-      if (!user) {
-        return res.status(400).json({ error, message: "User not found" });
-      }
-
       return handleUserResponse(res, {
         status: 200,
         data: {
@@ -145,7 +141,9 @@ export const AuthController = {
       const { data, error } = await UserAuthService.otpSignIn({ email });
 
       if (error) {
-        return res.status(400).json({ error });
+        return res
+          .status(error.status || 400)
+          .json({ error, message: "Failed to send OTP" });
       }
 
       return res.status(200).json({ message: `OTP sent to ${email}` });
@@ -172,7 +170,9 @@ export const AuthController = {
       });
 
       if (error) {
-        return res.status(400).json({ error });
+        return res
+          .status(error.status || 400)
+          .json({ error, message: "Failed to verify OTP" });
       }
 
       const { session } = data || {};
@@ -182,10 +182,6 @@ export const AuthController = {
         return res
           .status(400)
           .json({ error, message: "No access token returned" });
-      }
-
-      if (!user) {
-        return res.status(400).json({ error, message: "User not found" });
       }
 
       return handleUserResponse(res, {

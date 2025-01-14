@@ -8,7 +8,7 @@ export const UserController = {
       const users = await UserService.getAll();
       res.status(200).json({ data: users });
     } catch (error) {
-      res.status(500).json({ error: "Failed to fetch users" });
+      res.status(500).json({ message: "Failed to fetch users", error });
     }
   },
 
@@ -18,7 +18,7 @@ export const UserController = {
       const user = await UserService.create({ name, email });
       res.status(201).json({ data: user });
     } catch (error) {
-      res.status(500).json({ error: "Failed to create user" });
+      res.status(500).json({ message: "Failed to create user", error });
     }
   },
 
@@ -36,8 +36,8 @@ export const UserController = {
 
       if (!email) {
         return res
-          .status(404)
-          .json({ error: error?.message || "User not found" });
+          .status(error?.status || 404)
+          .json({ message: "User not found", error });
       }
 
       const user = await UserService.find({
@@ -48,7 +48,8 @@ export const UserController = {
     } catch (error) {
       console.error("Error fetching user profile:", error);
       res.status(500).json({
-        error: "Failed to fetch user profile",
+        message: "Failed to fetch user profile",
+        error,
       });
     }
   },
