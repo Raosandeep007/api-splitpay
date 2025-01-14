@@ -5,6 +5,7 @@
   "scripts": {
     "start": "vercel dev",
     "dev": "ts-node -r tsconfig-paths/register src/server.ts",
+    "predeploy": "prisma migrate build",
     "build": "tsc && prisma generate",
     "vercel-build": "yarn build",
     "prisma:generate": "prisma generate",

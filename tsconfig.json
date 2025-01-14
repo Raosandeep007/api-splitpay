@@ -5,7 +5,10 @@
     "strict": true,
     "lib": ["esnext", "DOM"],
     "esModuleInterop": true
-    // "baseUrl": "src"
+    // "baseUrl": "src",
+    // "paths": {
+    //   "@/*": ["*"]
+    // }
   },
   "include": ["src/**/*", "prisma/**/*", "supabase/supabase.ts"],
   "exclude": ["node_modules"]
