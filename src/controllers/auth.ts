@@ -1,4 +1,3 @@
-import { User } from "@prisma/client";
 import { Request, Response } from "express";
 import { UserAuthService } from "../services/auth";
 import { UserService } from "../services/user";
@@ -40,8 +39,8 @@ export const AuthController = {
           email: user.email,
           name: user.name,
           picture: user.picture,
-          createdAt: user.createdAt,
-          updatedAt: user.updatedAt,
+          created_at: user.created_at,
+          updated_at: user.updated_at,
           access,
           refresh,
         },
@@ -232,8 +231,8 @@ export const AuthController = {
           email: user.user_metadata.email,
           name: user.user_metadata.name,
           picture: user.user_metadata.picture,
-          createdAt: new Date(user.created_at),
-          updatedAt: new Date(user.updated_at || ""),
+          created_at: new Date(user.created_at),
+          updated_at: new Date(user.updated_at || ""),
           access,
           refresh: refresh_token,
         },

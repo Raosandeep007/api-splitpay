@@ -1,11 +1,11 @@
-import { PrismaClient, Prisma } from "@prisma/client";
-
-const prisma = new PrismaClient();
+import { Prisma } from "@prisma/client";
+import prisma from "../src/prisma/client";
 
 const userData: Prisma.UserCreateInput[] = [
   {
     name: "Alice",
     email: "alice@prisma.io",
+    picture: "https://cdn.fakercloud.com/avatars/alice_128.jpg",
   },
   {
     name: "Nilu",
