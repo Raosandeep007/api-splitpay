@@ -1,11 +1,7 @@
-import { createClient } from "@supabase/supabase-js";
+import { EmailOtpType } from "@supabase/supabase-js";
+import { supabase } from "../../supabase/supabase";
 
-const supabase = createClient(
-  process.env.SUPABASE_URL!,
-  process.env.SUPABASE_ANON_KEY!,
-);
-
-export const AuthService = {
+export const UserAuthService = {
   authenticateWithGoogleToken: async (idToken: string) => {
     return await supabase.auth.signInWithIdToken({
       provider: "google",
@@ -38,6 +34,31 @@ export const AuthService = {
     return await supabase.auth.signInWithPassword({
       email,
       password,
+    });
+  },
+
+  otpSignIn: async ({ email }: { email: string }) => {
+    return await supabase.auth.signInWithOtp({
+      email,
+      options: {
+        shouldCreateUser: false,
+      },
+    });
+  },
+
+  verifyOtp: async ({
+    otp,
+    email,
+    type,
+  }: {
+    otp: string;
+    email: string;
+    type: EmailOtpType;
+  }) => {
+    return await supabase.auth.verifyOtp({
+      email,
+      token: otp,
+      type,
     });
   },
 
